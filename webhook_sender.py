@@ -3,31 +3,34 @@ import json
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from PIL import ImageGrab
 import pygetwindow as gw
+import sys
 
-def capture_screenshot(window_title="Roblox"):
+def capture_screenshot():
+    # Find the Roblox window by title
+    window_title = "Roblox"
     try:
-        # Find the Roblox window
-        window = gw.getWindowsWithTitle(window_title)[0]  # Assuming Roblox is the first window with this title
+        window = gw.getWindowsWithTitle(window_title)[0]
         screenshot = ImageGrab.grab(bbox=(window.left, window.top, window.right, window.bottom))
-        
-        # Save the screenshot
-        screenshot_path = "screenshot.png"
-        screenshot.save(screenshot_path)
-        return screenshot_path
-    except Exception as e:
-        print(f"Error capturing Roblox window: {e}")
+    except IndexError:
+        print("Roblox window not found.")
         return None
+    
+    # Save the screenshot
+    screenshot_path = "screenshot.png"
+    screenshot.save(screenshot_path)
+    return screenshot_path
 
-def send_webhook(webhook_url, text, discord_id=""):
-    # Capture the screenshot of Roblox
-    screenshot_path = capture_screenshot("Roblox")
-    if screenshot_path is None:
-        print("Failed to capture Roblox screenshot.")
+def send_webhook(webhook_url, title, text, discord_id=""):
+    # Capture the screenshot
+    screenshot_path = capture_screenshot()
+    if not screenshot_path:
+        print("Failed to capture screenshot.")
         return
     
     # Create the embed
     mention = f"<@{discord_id}>" if discord_id else ""
-    embed = DiscordEmbed(title='Roblox Update', description=f"{text} {mention}", color=5814783)
+    embed_description = f"Roblox Screenshot: {text} {mention}"  # Title and text combined in description
+    embed = DiscordEmbed(title=title, description=embed_description, color=5814783)
     embed.set_image(url='attachment://screenshot.png')
 
     # Send the webhook with the screenshot
@@ -42,10 +45,14 @@ def send_webhook(webhook_url, text, discord_id=""):
         print("Webhook sent successfully!")
     else:
         print(f"Failed to send webhook: {response.status_code}")
-
     return response.status_code
 
-# Example usage
-if __name__ == "__main__":
-    webhook_url = 'YOUR_DISCORD_WEBHOOK_URL'
-    send_webhook(webhook_url, "Roblox is running!", "123456789012345678")
+# Get arguments from AHK (webhook_url, title, text, discord_id)
+if len(sys.argv) < 4:
+    print("Missing arguments.")
+else:
+    webhook_url = sys.argv[1]
+    title = sys.argv[2]
+    text = sys.argv[3]
+    discord_id = sys.argv[4] if len(sys.argv) > 4 else ""
+    send_webhook(webhook_url, title, text, discord_id)
