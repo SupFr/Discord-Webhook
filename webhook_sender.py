@@ -30,7 +30,7 @@ def send_webhook(webhook_url, title, text, discord_id="", icon_url="https://cdn.
     # Create the embed
     mention = f"<@{discord_id}>" if discord_id else ""
     embed_description = f"{text}"  # Title and text combined in description
-    embed = DiscordEmbed(title=title, description=embed_description, color=301934)
+    embed = DiscordEmbed(title=title, description=embed_description, color=800080)
     embed.set_image(url='attachment://screenshot.png')
     
     # Add a thumbnail (icon)
