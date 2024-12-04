@@ -20,7 +20,7 @@ def capture_screenshot():
     screenshot.save(screenshot_path)
     return screenshot_path
 
-def send_webhook(webhook_url, title, text, discord_id=""):
+def send_webhook(webhook_url, title, text, discord_id="", icon_url="https://cdn.discordapp.com/attachments/1308891045588897833/1313916621194006640/media.png?ex=6751dfb5&is=67508e35&hm=c8f7949bc3a6665d557480b70652953b24545eff5112f34ad77679b54a4237a8&"):
     # Capture the screenshot
     screenshot_path = capture_screenshot()
     if not screenshot_path:
@@ -30,11 +30,14 @@ def send_webhook(webhook_url, title, text, discord_id=""):
     # Create the embed
     mention = f"<@{discord_id}>" if discord_id else ""
     embed_description = f"{text}"  # Title and text combined in description
-    embed = DiscordEmbed(title=title, description=embed_description, color=341539)
+    embed = DiscordEmbed(title=title, description=embed_description, color=301934)
     embed.set_image(url='attachment://screenshot.png')
+    
+    # Add a thumbnail (icon)
+    embed.set_thumbnail(url=icon_url)
 
     # Send the webhook with the screenshot
-    webhook = DiscordWebhook(url=webhook_url, content= mention , embeds=[embed])
+    webhook = DiscordWebhook(url=webhook_url, content=mention, embeds=[embed])
     webhook.add_file(file=open(screenshot_path, 'rb'), filename='screenshot.png')
     
     # Execute the webhook
