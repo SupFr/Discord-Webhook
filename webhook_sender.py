@@ -30,11 +30,11 @@ def send_webhook(webhook_url, title, text, discord_id=""):
     # Create the embed
     mention = f"<@{discord_id}>" if discord_id else ""
     embed_description = f"{text}"  # Title and text combined in description
-    embed = DiscordEmbed(title=title, description=embed_description, color=5814783)
+    embed = DiscordEmbed(title=title, description=embed_description, color=341539)
     embed.set_image(url='attachment://screenshot.png')
 
     # Send the webhook with the screenshot
-    webhook = DiscordWebhook(url=webhook_url, content=" {mention} ", embeds=[embed])
+    webhook = DiscordWebhook(url=webhook_url, content= mention , embeds=[embed])
     webhook.add_file(file=open(screenshot_path, 'rb'), filename='screenshot.png')
     
     # Execute the webhook
